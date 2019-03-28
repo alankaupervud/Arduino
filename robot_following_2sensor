@@ -1,0 +1,62 @@
+
+// пин датчика линии  M2 - левый мотор M1- правый мотор
+#define SL A0 //  левый датчик по направлению
+#define SR A5 // правый датчик по направлению
+// определяем напряжение питания Vcc — 5 В или 3.3 В
+#define VOLTAGE 5.0 
+
+int left_s,right_s;
+#include <AFMotor.h>
+
+AF_DCMotor l_motor(1);
+AF_DCMotor r_motor (2);
+void setup() {
+  Serial.begin(9600);           // set up Serial library at 9600 bps
+  Serial.println("Motor test!");
+
+  // turn on motor
+  l_motor.setSpeed(95);
+ 
+  l_motor.run(RELEASE);
+
+  r_motor.setSpeed(95);
+ 
+  r_motor.run(RELEASE);
+
+  
+  
+}
+
+void loop() {
+  uint8_t i;
+  
+ left_s = analogRead(SL);
+
+ right_s  = analogRead(SR);
+  
+ if ( (left_s < 500) && (right_s < 500) ) 
+ {
+ l_motor.run(FORWARD);
+ r_motor.run(FORWARD);
+ //delay(200);
+ }
+ if ((left_s>500) && (right_s < 500)) //движение налево
+{l_motor.run(FORWARD);
+ r_motor.run( BACKWARD);  // RELEASE
+  //delay(200);
+ }
+ 
+ 
+if ((left_s<500) && (right_s > 500)) //движение направо 
+ {l_motor.run(BACKWARD); //RELEASE
+ r_motor.run(FORWARD);
+  //delay(200);
+ }
+if ( (left_s > 500) && (right_s > 500)) //остановка 
+ {l_motor.run(RELEASE);
+ r_motor.run(RELEASE);
+  delay(2000);
+ }
+ 
+  
+}
