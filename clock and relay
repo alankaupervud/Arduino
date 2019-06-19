@@ -1,0 +1,29 @@
+
+#define PIN_RELAY 3 // Определяем пин, используемый для подключения реле
+//_______________________________________________________________________________
+#include <iarduino_RTC.h>
+ iarduino_RTC time(RTC_DS1302, 8, 6, 7); 
+ // подключаем RTC модуль на базе чипа DS1302, указывая выводы Arduino подключённые к выводам модуля RST, CLK, DAT
+
+void setup() {
+    delay(300);
+    Serial.begin(9600);
+    time.begin();
+
+    //________________________________________________________
+    pinMode(PIN_RELAY, OUTPUT); // Объявляем пин реле как выход
+    digitalWrite(PIN_RELAY, HIGH); // Выключаем реле - посылаем высокий сигнал
+}
+void loop(){
+    if(millis()%1000==0){ // если прошла 1 секунда
+      Serial.println(time.gettime("d-m-Y, H:i:s, D")); // выводим время
+      Serial.println(time.gettime("H")); 
+      delay(1); // приостанавливаем на 1 мс, чтоб не выводить время несколько раз за 1мс
+      }
+    time.period(1);
+    if (time.gettime("H") > 4)       {
+      digitalWrite(PIN_RELAY, LOW); // Включаем реле - посылаем низкий уровень сигнала
+    }
+    else {digitalWrite(PIN_RELAY, HIGH);}
+}
+
